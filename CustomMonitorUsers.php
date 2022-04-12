@@ -120,7 +120,7 @@ class CustomMonitorUsersPlugin extends MantisPlugin
                 $select_opt .= '<option value="' . $t_user['id'] . '">' . string_attribute($t_display[$key]) . '</option>';
             }
 
-            $html = '<select name="user_id[]" class="selectpicker" multiple data-style="btn-sm btn-white" ';
+            $html = '<select name="user_id[]" class="selectpicker" multiple data-style="btn-sm btn-white" data-live-Search="true" data-none-Selected-Text="Пользователь не выбран" ';
             $html .= 'data-container="body">' . $select_opt . '</select>';
 
         } else {
