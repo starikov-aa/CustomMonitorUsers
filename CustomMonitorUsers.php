@@ -37,11 +37,6 @@ class CustomMonitorUsersPlugin extends MantisPlugin
 
     function init()
     {
-        foreach ($this->config() as $k => $v) {
-            if (plugin_config_get($k, "notfound") == "notfound") {
-                plugin_config_set($k, $v);
-            }
-        }
     }
 
 
