@@ -52,7 +52,7 @@ class CustomMonitorUsersPlugin extends MantisPlugin
     function hooks()
     {
         $t_hooks = array(
-            'EVENT_LAYOUT_BODY_END' => 'add_scripts'
+            'EVENT_LAYOUT_BODY_END' => 'cmu_event_layout_body_end'
         );
 
         return $t_hooks;
@@ -63,12 +63,11 @@ class CustomMonitorUsersPlugin extends MantisPlugin
      */
     function cmu_event_layout_body_end()
     {
-        if (preg_match('/.*\/view\.php/i', $_SERVER['SCRIPT_NAME']) && plugin_config_get('add_monitoring_users_via_selectbox')) {
-            $html = "<link rel='stylesheet' href='" . plugin_file("bootstrap-select.min.css") . "'>";
-            $html .= "<script src='" . plugin_file("bootstrap-select.min.js") . "'></script>";
-            $html .= "<script>$('form[action=\'bug_monitor_add.php\']').attr('action', '" . plugin_page("bug_monitor_add") . "').attr('method', 'post')</script>";
-            $html .= $this->create_monitor_user_selectbox();
-            return $html . plugin_config_get('add_monitoring_users_via_selectbox');
+        if (plugin_config_get('add_monitoring_users_via_selectbox') && preg_match('/.*\/view\.php/i', $_SERVER['SCRIPT_NAME'])) {
+            html_css_cdn_link(plugin_file("bootstrap-select.min.css")) . PHP_EOL;
+            html_javascript_cdn_link(plugin_file("bootstrap-select.min.js")) . PHP_EOL;
+            echo "\t", "<script>$('form[action=\'bug_monitor_add.php\']').attr('action', '" . plugin_page("bug_monitor_add") . "').attr('method', 'post')</script>" . PHP_EOL;
+            echo "\t", $this->create_monitor_user_selectbox() . PHP_EOL;
         }
     }
 
@@ -81,17 +80,13 @@ class CustomMonitorUsersPlugin extends MantisPlugin
     {
         $t_issue_id = gpc_get_int('id');
 
-        $t_monitor_can_add = access_has_bug_level(config_get('monitor_add_others_bug_threshold'), $t_issue_id) ? true : false;
-
+        $t_monitor_can_add = access_has_bug_level(config_get('monitor_add_others_bug_threshold'), $t_issue_id);
         if (!$t_monitor_can_add) {
             return false;
         }
 
         $t_bug = bug_get($t_issue_id);
-
-
         $t_users_can_monitor = project_get_all_user_rows($t_bug->project_id, config_get('monitor_bug_threshold'));
-
         $t_display = array();
         $t_sort = array();
         $t_show_realname = (ON == config_get('show_realname'));
@@ -129,7 +124,7 @@ class CustomMonitorUsersPlugin extends MantisPlugin
                 $select_opt .= '<option value="' . $t_user['id'] . '">' . string_attribute($t_display[$key]) . '</option>';
             }
 
-            $html = '<select name="user_id[]" class="selectpicker" multiple data-style="btn-sm btn-white" data-live-Search="true" data-none-Selected-Text="Пользователь не выбран" ';
+            $html = '<select name="user_id[]" class="selectpicker" multiple data-style="btn-sm btn-white" ';
             $html .= 'data-container="body">' . $select_opt . '</select>';
 
         } else {
@@ -137,7 +132,5 @@ class CustomMonitorUsersPlugin extends MantisPlugin
         }
 
         return "<script>$('#bug_monitor_list_username').replaceWith('" . $html . "')</script>";
-
-
     }
 }
