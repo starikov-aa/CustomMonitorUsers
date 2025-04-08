@@ -30,7 +30,8 @@ class CustomMonitorUsersPlugin extends MantisPlugin
     function config()
     {
         return [
-            'add_monitoring_users_via_selectbox' => 0
+            // Включение плагина
+            'add_monitoring_users_via_selectbox' => 1
         ];
     }
 
@@ -57,7 +58,10 @@ class CustomMonitorUsersPlugin extends MantisPlugin
         return $t_hooks;
     }
 
-    function add_scripts()
+    /**
+     * Добавляем ресурсы (js, style) в конец страниц и код выпадающего списка.
+     */
+    function cmu_event_layout_body_end()
     {
         if (preg_match('/.*\/view\.php/i', $_SERVER['SCRIPT_NAME']) && plugin_config_get('add_monitoring_users_via_selectbox')) {
             $html = "<link rel='stylesheet' href='" . plugin_file("bootstrap-select.min.css") . "'>";
@@ -68,6 +72,11 @@ class CustomMonitorUsersPlugin extends MantisPlugin
         }
     }
 
+    /**
+     * Генерирует HTML код выпадающего списка.
+     *
+     * @return string
+     */
     function create_monitor_user_selectbox()
     {
         $t_issue_id = gpc_get_int('id');
