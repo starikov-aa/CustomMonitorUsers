@@ -16,7 +16,7 @@ class CustomMonitorUsersPlugin extends MantisPlugin
         $this->name = 'CustomMonitorUsers';
         $this->description = 'CustomMonitorUsers';
 
-        $this->version = '0.1';
+        $this->version = '0.2';
         $this->requires = array(
             'MantisCore' => '2.3.0-dev',
         );
@@ -126,6 +126,7 @@ class CustomMonitorUsersPlugin extends MantisPlugin
             $html = "All users have already been added";
         }
 
-        return "<script>$('#bug_monitor_list_username').replaceWith('" . $html . "')</script>";
+        return "<script>$('#bug_monitor_list_username, #bug_monitor_list_user_to_add').replaceWith('" . $html . "')</script>";
+
     }
 }
